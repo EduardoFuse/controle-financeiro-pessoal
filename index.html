@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="topo">
+            <div>
+                <h1>Controle Financeiro</h1>
+                <p>Gerencie seus gastos de forma prática e profissional</p>
+            </div>
+        </header>
+
+        <section class="cards-resumo">
+            <div class="card-resumo">
+                <h3>Total de Gastos</h3>
+                <p id="totalGeral">R$ 0,00</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Gastos Mensais Fixos</h3>
+                <p id="totalMensais">R$ 0,00</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Parcelas por Mês</h3>
+                <p id="totalParcelasMes">R$ 0,00</p>
+            </div>
+        </section>
+
+        <section class="painel">
+            <div class="form-box">
+                <h2>Adicionar Gasto</h2>
+
+                <form id="formGasto">
+                    <div class="grid-form">
+                        <div class="campo">
+                            <label for="descricao">Descrição</label>
+                            <input type="text" id="descricao" placeholder="Ex: Almoço" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="valor">Valor total</label>
+                            <input type="number" id="valor" step="0.01" min="0.01" placeholder="Ex: 150.00" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="categoria">Categoria</label>
+                            <select id="categoria" required>
+                                <option value="">Selecione</option>
+                                <option value="Alimentação">Alimentação</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Moradia">Moradia</option>
+                                <option value="Lazer">Lazer</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Educação">Educação</option>
+                                <option value="Contas">Contas</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="tipoGasto">Tipo do gasto</label>
+                            <select id="tipoGasto" required>
+                                <option value="unico">Único</option>
+                                <option value="mensal">Mensal</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="formaPagamento">Forma de pagamento</label>
+                            <select id="formaPagamento" required>
+                                <option value="">Selecione</option>
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="pix">Pix</option>
+                                <option value="cartao">Cartão</option>
+                            </select>
+                        </div>
+
+                        <div class="campo oculto" id="campoTipoCartao">
+                            <label for="tipoCartao">Tipo do cartão</label>
+                            <select id="tipoCartao">
+                                <option value="">Selecione</option>
+                                <option value="debito">Débito</option>
+                                <option value="credito">Crédito</option>
+                            </select>
+                        </div>
+
+                        <div class="campo oculto" id="campoParcelas">
+                            <label for="parcelas">Quantidade de parcelas</label>
+                            <input type="number" id="parcelas" min="1" value="1">
+                        </div>
+
+                        <div class="campo oculto" id="campoMesInicio">
+                            <label for="mesInicio">Mês inicial da compra</label>
+                            <input type="month" id="mesInicio">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">Adicionar gasto</button>
+                </form>
+            </div>
+
+            <div class="lista-box">
+                <h2>Lista de Gastos</h2>
+                <div id="listaGastos" class="lista-gastos">
+                    <p class="vazio">Nenhum gasto cadastrado ainda.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
