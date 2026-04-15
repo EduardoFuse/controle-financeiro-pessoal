@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle Financeiro Pro</title>
+    <title>Controle Financeiro Pro+</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <header class="topo">
             <div>
-                 <h1>Controle Financeiro</h1>
-                <p>Gerencie seus gastos de forma prática e profissional</p>
+                <h1>Controle Financeiro Pro+</h1>
+                <p>Gerencie despesas, recorrências, cartão, parcelas e fatura mensal</p>
             </div>
         </header>
 
         <section class="cards-resumo">
             <div class="card-resumo">
-                <h3>Total de Gastos</h3>
+                <h3>Total Geral</h3>
                 <p id="totalGeral">R$ 0,00</p>
             </div>
 
             <div class="card-resumo">
-                <h3>Gastos Mensais Fixos</h3>
+                <h3>Mensais Fixos</h3>
                 <p id="totalMensais">R$ 0,00</p>
             </div>
 
@@ -30,17 +31,32 @@
                 <h3>Parcelas por Mês</h3>
                 <p id="totalParcelasMes">R$ 0,00</p>
             </div>
+
+            <div class="card-resumo">
+                <h3>Débito</h3>
+                <p id="totalDebito">R$ 0,00</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Crédito</h3>
+                <p id="totalCredito">R$ 0,00</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Pix / Dinheiro</h3>
+                <p id="totalOutrosPagamentos">R$ 0,00</p>
+            </div>
         </section>
 
         <section class="painel">
             <div class="form-box">
-                <h2>Adicionar Gasto</h2>
+                <h2 id="tituloFormulario">Adicionar Gasto</h2>
 
                 <form id="formGasto">
                     <div class="grid-form">
                         <div class="campo">
                             <label for="descricao">Descrição</label>
-                            <input type="text" id="descricao" placeholder="Ex: Almoço" required>
+                            <input type="text" id="descricao" placeholder="Ex: Mercado" required>
                         </div>
 
                         <div class="campo">
@@ -101,15 +117,80 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn">Adicionar gasto</button>
+                    <div class="acoes-form">
+                        <button type="submit" class="btn">Salvar gasto</button>
+                        <button type="button" class="btn btn-secundario oculto" id="btnCancelarEdicao">Cancelar edição</button>
+                    </div>
                 </form>
             </div>
 
-            <div class="lista-box">
-                <h2>Lista de Gastos</h2>
-                <div id="listaGastos" class="lista-gastos">
-                    <p class="vazio">Nenhum gasto cadastrado ainda.</p>
+            <div class="filtro-box">
+                <h2>Filtros e Controle</h2>
+
+                <div class="grid-form">
+                    <div class="campo">
+                        <label for="filtroMes">Filtrar por mês</label>
+                        <input type="month" id="filtroMes">
+                    </div>
+
+                    <div class="campo">
+                        <label for="filtroCategoria">Filtrar por categoria</label>
+                        <select id="filtroCategoria">
+                            <option value="">Todas</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Contas">Contas</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="filtroPagamento">Forma de pagamento</label>
+                        <select id="filtroPagamento">
+                            <option value="">Todas</option>
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="pix">Pix</option>
+                            <option value="cartao">Cartão</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="buscaDescricao">Buscar descrição</label>
+                        <input type="text" id="buscaDescricao" placeholder="Digite algo...">
+                    </div>
+
+                    <div class="campo">
+                        <label for="mesFatura">Ver fatura do cartão no mês</label>
+                        <input type="month" id="mesFatura">
+                    </div>
                 </div>
+
+                <div class="acoes-controle">
+                    <button class="btn btn-secundario" id="btnLimparFiltros">Limpar filtros</button>
+                    <button class="btn btn-secundario" id="btnExportar">Exportar JSON</button>
+                    <button class="btn btn-danger" id="btnLimparTudo">Apagar tudo</button>
+                </div>
+
+                <div class="box-fatura">
+                    <h3>Fatura do cartão no mês selecionado</h3>
+                    <p id="valorFaturaMes">R$ 0,00</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grafico-box">
+            <h2>Gráfico por Categoria</h2>
+            <canvas id="graficoCategorias"></canvas>
+        </section>
+
+        <section class="lista-box">
+            <h2>Lista de Gastos</h2>
+            <div id="listaGastos" class="lista-gastos">
+                <p class="vazio">Nenhum gasto cadastrado ainda.</p>
             </div>
         </section>
     </div>
