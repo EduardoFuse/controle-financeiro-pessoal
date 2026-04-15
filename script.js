@@ -17,7 +17,7 @@ const totalGeral = document.getElementById("totalGeral");
 const totalMensais = document.getElementById("totalMensais");
 const totalParcelasMes = document.getElementById("totalParcelasMes");
 
-let gastos = [];
+let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
 formaPagamento.addEventListener("change", () => {
     if (formaPagamento.value === "cartao") {
@@ -61,18 +61,13 @@ formGasto.addEventListener("submit", function (e) {
     }
 
     if (pagamento === "cartao" && cartao === "") {
-        alert("Selecione se o cartão é crédito ou débito.");
+        alert("Selecione crédito ou débito.");
         return;
     }
 
     if (pagamento === "cartao" && cartao === "credito") {
         if (!mesInicio.value) {
-            alert("Selecione o mês inicial da compra.");
-            return;
-        }
-
-        if (isNaN(qtdParcelas) || qtdParcelas < 1) {
-            alert("Digite uma quantidade de parcelas válida.");
+            alert("Selecione o mês inicial.");
             return;
         }
     }
@@ -80,7 +75,7 @@ formGasto.addEventListener("submit", function (e) {
     let valorMensalParcela = 0;
     let mesFinal = "-";
 
-    if (pagamento === "cartao" && cartao === "credito") {
+    if (cartao === "credito") {
         valorMensalParcela = val / qtdParcelas;
         mesFinal = calcularMesFinal(mesInicio.value, qtdParcelas);
     }
@@ -93,15 +88,20 @@ formGasto.addEventListener("submit", function (e) {
         tipoGasto: tipo,
         formaPagamento: pagamento,
         tipoCartao: pagamento === "cartao" ? cartao : "-",
-        parcelas: pagamento === "cartao" && cartao === "credito" ? qtdParcelas : 0,
-        mesInicio: pagamento === "cartao" && cartao === "credito" ? formatarMes(mesInicio.value) : "-",
-        mesFinal: pagamento === "cartao" && cartao === "credito" ? mesFinal : "-",
-        valorMensalParcela: pagamento === "cartao" && cartao === "credito" ? valorMensalParcela : 0
+        parcelas: cartao === "credito" ? qtdParcelas : 0,
+        mesInicio: cartao === "credito" ? formatarMes(mesInicio.value) : "-",
+        mesFinal: cartao === "credito" ? mesFinal : "-",
+        valorMensalParcela: cartao === "credito" ? valorMensalParcela : 0
     };
 
     gastos.push(gasto);
+
+    // 💾 SALVA NO NAVEGADOR
+    localStorage.setItem("gastos", JSON.stringify(gastos));
+
     atualizarTela();
     formGasto.reset();
+
     campoTipoCartao.classList.add("oculto");
     campoParcelas.classList.add("oculto");
     campoMesInicio.classList.add("oculto");
@@ -111,48 +111,28 @@ function atualizarTela() {
     listaGastos.innerHTML = "";
 
     if (gastos.length === 0) {
-        listaGastos.innerHTML = `<p class="vazio">Nenhum gasto cadastrado ainda.</p>`;
+        listaGastos.innerHTML = `<p class="vazio">Nenhum gasto cadastrado.</p>`;
     } else {
         gastos.forEach((gasto) => {
             const div = document.createElement("div");
             div.className = "item-gasto";
 
-            let detalhesPagamento = `
-                <p><strong>Pagamento:</strong> ${capitalizar(gasto.formaPagamento)}</p>
-            `;
-
-            if (gasto.formaPagamento === "cartao") {
-                detalhesPagamento += `
-                    <p><strong>Cartão:</strong> ${capitalizar(gasto.tipoCartao)}</p>
-                `;
-            }
-
-            if (gasto.tipoCartao === "credito") {
-                detalhesPagamento += `
-                    <p><strong>Parcelado em:</strong> ${gasto.parcelas}x</p>
-                    <p><strong>Valor por mês:</strong> ${formatarMoeda(gasto.valorMensalParcela)}</p>
-                    <p><strong>Início:</strong> ${gasto.mesInicio}</p>
-                    <p><strong>Termina em:</strong> ${gasto.mesFinal}</p>
-                `;
-            }
-
-            if (gasto.tipoGasto === "mensal") {
-                detalhesPagamento += `
-                    <p><strong>Recorrência:</strong> Gasto mensal fixo</p>
-                `;
-            }
-
             div.innerHTML = `
-                <div class="item-info">
-                    <h3>${gasto.descricao}</h3>
-                    <p><strong>Categoria:</strong> ${gasto.categoria}</p>
-                    <p><strong>Tipo:</strong> ${gasto.tipoGasto === "mensal" ? "Mensal" : "Único"}</p>
-                    ${detalhesPagamento}
-                </div>
-
                 <div>
-                    <p class="valor">${formatarMoeda(gasto.valor)}</p>
-                    <button class="btn-excluir" onclick="excluirGasto(${gasto.id})">Excluir</button>
+                    <h3>${gasto.descricao}</h3>
+                    <p>${gasto.categoria}</p>
+                    <p>${gasto.tipoGasto}</p>
+                    <p>${gasto.formaPagamento} ${gasto.tipoCartao}</p>
+                    ${gasto.tipoCartao === "credito" ? `
+                        <p>${gasto.parcelas}x</p>
+                        <p>R$ ${gasto.valorMensalParcela.toFixed(2)}/mês</p>
+                        <p>${gasto.mesInicio} até ${gasto.mesFinal}</p>
+                    ` : ""}
+                </div>
+                <div>
+                    <strong>R$ ${gasto.valor.toFixed(2)}</strong>
+                    <br>
+                    <button onclick="excluirGasto(${gasto.id})">Excluir</button>
                 </div>
             `;
 
@@ -164,66 +144,49 @@ function atualizarTela() {
 }
 
 function calcularResumo() {
-    let somaTotal = 0;
-    let somaMensais = 0;
-    let somaParcelasMes = 0;
+    let total = 0;
+    let mensais = 0;
+    let parcelasMes = 0;
 
-    gastos.forEach((gasto) => {
-        somaTotal += gasto.valor;
+    gastos.forEach((g) => {
+        total += g.valor;
 
-        if (gasto.tipoGasto === "mensal") {
-            somaMensais += gasto.valor;
+        if (g.tipoGasto === "mensal") {
+            mensais += g.valor;
         }
 
-        if (gasto.tipoCartao === "credito") {
-            somaParcelasMes += gasto.valorMensalParcela;
+        if (g.tipoCartao === "credito") {
+            parcelasMes += g.valorMensalParcela;
         }
     });
 
-    totalGeral.textContent = formatarMoeda(somaTotal);
-    totalMensais.textContent = formatarMoeda(somaMensais);
-    totalParcelasMes.textContent = formatarMoeda(somaParcelasMes);
+    totalGeral.textContent = "R$ " + total.toFixed(2);
+    totalMensais.textContent = "R$ " + mensais.toFixed(2);
+    totalParcelasMes.textContent = "R$ " + parcelasMes.toFixed(2);
 }
 
 function excluirGasto(id) {
-    gastos = gastos.filter((gasto) => gasto.id !== id);
+    gastos = gastos.filter(g => g.id !== id);
+
+    // 💾 ATUALIZA NO STORAGE
+    localStorage.setItem("gastos", JSON.stringify(gastos));
+
     atualizarTela();
 }
 
-function formatarMoeda(valor) {
-    return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
-}
-
-function capitalizar(texto) {
-    if (!texto || texto === "-") return "-";
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-}
-
-function formatarMes(valorMes) {
-    if (!valorMes) return "-";
-
-    const [ano, mes] = valorMes.split("-");
-    const nomesMeses = [
-        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
-
-    return `${nomesMeses[parseInt(mes) - 1]}/${ano}`;
-}
-
-function calcularMesFinal(mesInicial, qtdParcelas) {
+function calcularMesFinal(mesInicial, parcelas) {
     const [ano, mes] = mesInicial.split("-").map(Number);
+    const data = new Date(ano, mes - 1);
 
-    const data = new Date(ano, mes - 1, 1);
-    data.setMonth(data.getMonth() + (qtdParcelas - 1));
+    data.setMonth(data.getMonth() + parcelas - 1);
 
-    const nomesMeses = [
-        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
-
-    return `${nomesMeses[data.getMonth()]}/${data.getFullYear()}`;
+    return `${data.getMonth() + 1}/${data.getFullYear()}`;
 }
+
+function formatarMes(mes) {
+    const [ano, m] = mes.split("-");
+    return `${m}/${ano}`;
+}
+
+// 🔥 CARREGA DADOS AO ABRIR
+atualizarTela();
