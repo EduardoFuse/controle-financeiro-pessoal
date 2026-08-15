@@ -1,224 +1,156 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle Financeiro Profissional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Painel simples e privado para organizar receitas, despesas e saldo mensal.">
+  <meta name="theme-color" content="#0f766e">
+  <title>Meu Financeiro</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="telaInicial" class="tela-inicial">
-    <div class="box-inicial">
-      <h1>Controle Financeiro Profissional</h1>
-      <p>Escolha qual área deseja acessar</p>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-      <div class="botoes-iniciais">
-        <button class="btn btn-grande" onclick="abrirModulo('gastos')">Entrar em Gastos</button>
-        <button class="btn btn-grande btn-secundario" onclick="abrirModulo('recebimentos')">Entrar em Recebimentos</button>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">MF</span>
+      <div>
+        <strong>Meu Financeiro</strong>
+        <span>Controle pessoal, simples e privado</span>
       </div>
     </div>
-  </div>
 
-  <div id="app" class="container oculto">
-    <header class="topo">
+    <div class="header-actions">
+      <label class="month-picker">
+        <span>Mês de referência</span>
+        <input id="mesReferencia" type="month" aria-label="Mês de referência">
+      </label>
+      <button id="btnTema" class="icon-button" type="button" aria-label="Alternar tema" title="Alternar tema">◐</button>
+    </div>
+  </header>
+
+  <main id="conteudo" class="container">
+    <section class="hero" aria-labelledby="titulo-painel">
       <div>
-        <h1>Controle Financeiro Profissional</h1>
-        <p>Gerencie gastos e recebimentos em um só lugar</p>
+        <p class="eyebrow">Visão geral</p>
+        <h1 id="titulo-painel">Seu dinheiro, sem complicação.</h1>
+        <p>Acompanhe o que entra, o que sai e tome decisões com clareza.</p>
       </div>
-
-      <div class="topo-acoes">
-        <button class="btn btn-topo" onclick="trocarModulo('gastos')">Gastos</button>
-        <button class="btn btn-topo btn-secundario" onclick="trocarModulo('recebimentos')">Recebimentos</button>
-        <button class="btn btn-topo btn-danger" onclick="voltarInicio()">Sair</button>
-      </div>
-    </header>
-
-    <section id="moduloGastos">
-      <section class="cards-resumo">
-        <div class="card-resumo">
-          <h3>Total de Gastos</h3>
-          <p id="totalGastos">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Mensais Fixos</h3>
-          <p id="totalMensais">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Parcelas por Mês</h3>
-          <p id="totalParcelasMes">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Débito</h3>
-          <p id="totalDebito">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Crédito</h3>
-          <p id="totalCredito">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Pix / Dinheiro</h3>
-          <p id="totalOutrosPagamentos">R$ 0,00</p>
-        </div>
-      </section>
-
-      <section class="painel">
-        <div class="form-box">
-          <h2>Adicionar Gasto</h2>
-
-          <form id="formGasto">
-            <div class="grid-form">
-              <div class="campo">
-                <label for="descricaoGasto">Descrição</label>
-                <input type="text" id="descricaoGasto" placeholder="Ex: Mercado" required>
-              </div>
-
-              <div class="campo">
-                <label for="valorGasto">Valor total</label>
-                <input type="number" id="valorGasto" step="0.01" min="0.01" placeholder="Ex: 150.00" required>
-              </div>
-
-              <div class="campo">
-                <label for="categoriaGasto">Categoria</label>
-                <select id="categoriaGasto" required>
-                  <option value="">Selecione</option>
-                  <option value="Alimentação">Alimentação</option>
-                  <option value="Transporte">Transporte</option>
-                  <option value="Moradia">Moradia</option>
-                  <option value="Lazer">Lazer</option>
-                  <option value="Saúde">Saúde</option>
-                  <option value="Educação">Educação</option>
-                  <option value="Contas">Contas</option>
-                  <option value="Outros">Outros</option>
-                </select>
-              </div>
-
-              <div class="campo">
-                <label for="tipoGasto">Tipo do gasto</label>
-                <select id="tipoGasto" required>
-                  <option value="unico">Único</option>
-                  <option value="mensal">Mensal</option>
-                </select>
-              </div>
-
-              <div class="campo">
-                <label for="formaPagamento">Forma de pagamento</label>
-                <select id="formaPagamento" required>
-                  <option value="">Selecione</option>
-                  <option value="dinheiro">Dinheiro</option>
-                  <option value="pix">Pix</option>
-                  <option value="cartao">Cartão</option>
-                </select>
-              </div>
-
-              <div class="campo oculto" id="campoTipoCartao">
-                <label for="tipoCartao">Tipo do cartão</label>
-                <select id="tipoCartao">
-                  <option value="">Selecione</option>
-                  <option value="debito">Débito</option>
-                  <option value="credito">Crédito</option>
-                </select>
-              </div>
-
-              <div class="campo oculto" id="campoParcelas">
-                <label for="parcelas">Quantidade de parcelas</label>
-                <input type="number" id="parcelas" min="1" value="1">
-              </div>
-
-              <div class="campo oculto" id="campoMesInicio">
-                <label for="mesInicio">Mês inicial da compra</label>
-                <input type="month" id="mesInicio">
-              </div>
-            </div>
-
-            <button type="submit" class="btn">Salvar gasto</button>
-          </form>
-        </div>
-
-        <div class="lista-box">
-          <h2>Lista de Gastos</h2>
-          <div id="listaGastos" class="lista-gastos">
-            <p class="vazio">Nenhum gasto cadastrado ainda.</p>
-          </div>
-        </div>
-      </section>
+      <button id="btnNovoLancamento" class="button button-primary" type="button">+ Novo lançamento</button>
     </section>
 
-    <section id="moduloRecebimentos" class="oculto">
-      <section class="cards-resumo">
-        <div class="card-resumo">
-          <h3>Total Recebido</h3>
-          <p id="totalRecebido">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Recebido em Pix</h3>
-          <p id="totalPixRecebido">R$ 0,00</p>
-        </div>
-
-        <div class="card-resumo">
-          <h3>Recebido em Dinheiro</h3>
-          <p id="totalDinheiroRecebido">R$ 0,00</p>
-        </div>
-      </section>
-
-      <section class="painel">
-        <div class="form-box">
-          <h2>Adicionar Recebimento</h2>
-
-          <form id="formRecebimento">
-            <div class="grid-form">
-              <div class="campo">
-                <label for="descricaoRecebimento">Descrição</label>
-                <input type="text" id="descricaoRecebimento" placeholder="Ex: Salário" required>
-              </div>
-
-              <div class="campo">
-                <label for="valorRecebimento">Valor</label>
-                <input type="number" id="valorRecebimento" step="0.01" min="0.01" placeholder="Ex: 2500.00" required>
-              </div>
-
-              <div class="campo">
-                <label for="categoriaRecebimento">Categoria</label>
-                <select id="categoriaRecebimento" required>
-                  <option value="">Selecione</option>
-                  <option value="Salário">Salário</option>
-                  <option value="Freelance">Freelance</option>
-                  <option value="Venda">Venda</option>
-                  <option value="Presente">Presente</option>
-                  <option value="Extra">Extra</option>
-                  <option value="Outros">Outros</option>
-                </select>
-              </div>
-
-              <div class="campo">
-                <label for="formaRecebimento">Forma de recebimento</label>
-                <select id="formaRecebimento" required>
-                  <option value="">Selecione</option>
-                  <option value="pix">Pix</option>
-                  <option value="dinheiro">Dinheiro</option>
-                </select>
-              </div>
-            </div>
-
-            <button type="submit" class="btn">Salvar recebimento</button>
-          </form>
-        </div>
-
-        <div class="lista-box">
-          <h2>Lista de Recebimentos</h2>
-          <div id="listaRecebimentos" class="lista-gastos">
-            <p class="vazio">Nenhum recebimento cadastrado ainda.</p>
-          </div>
-        </div>
-      </section>
+    <section class="summary-grid" aria-label="Resumo financeiro">
+      <article class="summary-card balance">
+        <div class="card-heading"><span>Saldo do mês</span><span class="card-icon" aria-hidden="true">↗</span></div>
+        <strong id="saldoMes">R$ 0,00</strong>
+        <small id="saldoStatus">Nenhum lançamento no período</small>
+      </article>
+      <article class="summary-card income">
+        <div class="card-heading"><span>Receitas</span><span class="card-icon" aria-hidden="true">+</span></div>
+        <strong id="totalReceitas">R$ 0,00</strong>
+        <small id="qtdReceitas">0 lançamentos</small>
+      </article>
+      <article class="summary-card expense">
+        <div class="card-heading"><span>Despesas</span><span class="card-icon" aria-hidden="true">−</span></div>
+        <strong id="totalDespesas">R$ 0,00</strong>
+        <small id="qtdDespesas">0 lançamentos</small>
+      </article>
+      <article class="summary-card planned">
+        <div class="card-heading"><span>Compromissos mensais</span><span class="card-icon" aria-hidden="true">↻</span></div>
+        <strong id="totalRecorrentes">R$ 0,00</strong>
+        <small>Despesas marcadas como recorrentes</small>
+      </article>
     </section>
-  </div>
 
+    <section class="dashboard-grid">
+      <article class="panel chart-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Distribuição</p><h2>Despesas por categoria</h2></div>
+          <span id="totalGrafico" class="muted"></span>
+        </div>
+        <div class="chart-layout">
+          <div class="donut-wrap">
+            <svg id="graficoCategorias" class="donut" viewBox="0 0 120 120" role="img" aria-label="Gráfico de despesas por categoria"></svg>
+            <div class="donut-center"><span>Despesas</span><strong id="centroGrafico">R$ 0</strong></div>
+          </div>
+          <div id="legendaGrafico" class="chart-legend"></div>
+        </div>
+      </article>
+
+      <article class="panel health-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Saúde financeira</p><h2>Uso da renda</h2></div></div>
+        <div class="health-score"><strong id="percentualUso">0%</strong><span>da renda comprometida</span></div>
+        <div class="progress" aria-hidden="true"><span id="barraUso"></span></div>
+        <p id="dicaFinanceira" class="health-tip">Adicione receitas e despesas para receber uma leitura do mês.</p>
+      </article>
+    </section>
+
+    <section class="panel transactions-panel" aria-labelledby="titulo-lancamentos">
+      <div class="panel-heading transactions-heading">
+        <div><p class="eyebrow">Movimentações</p><h2 id="titulo-lancamentos">Lançamentos</h2></div>
+        <div class="data-actions">
+          <button id="btnExportarCsv" class="button button-ghost" type="button">Exportar CSV</button>
+          <button id="btnExportarJson" class="button button-ghost" type="button">Backup</button>
+          <label class="button button-ghost file-button">Restaurar<input id="inputImportar" type="file" accept="application/json,.json"></label>
+        </div>
+      </div>
+
+      <div class="filters" role="search">
+        <label class="search-field"><span aria-hidden="true">⌕</span><input id="busca" type="search" placeholder="Buscar por descrição ou categoria" aria-label="Buscar lançamentos"></label>
+        <select id="filtroTipo" aria-label="Filtrar por tipo">
+          <option value="todos">Todos os tipos</option>
+          <option value="receita">Receitas</option>
+          <option value="despesa">Despesas</option>
+        </select>
+        <select id="filtroCategoria" aria-label="Filtrar por categoria"><option value="todas">Todas as categorias</option></select>
+        <button id="btnLimparFiltros" class="button button-ghost" type="button">Limpar filtros</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Descrição</th><th>Categoria</th><th>Data</th><th>Pagamento</th><th class="align-right">Valor</th><th><span class="sr-only">Ações</span></th></tr></thead>
+          <tbody id="tabelaLancamentos"></tbody>
+        </table>
+        <div id="estadoVazio" class="empty-state" hidden>
+          <span aria-hidden="true">◎</span><h3>Nenhum lançamento encontrado</h3><p>Cadastre uma movimentação ou altere os filtros.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="modalLancamento" class="modal">
+    <form id="formLancamento" method="dialog">
+      <div class="modal-heading">
+        <div><p class="eyebrow">Movimentação</p><h2 id="tituloModal">Novo lançamento</h2></div>
+        <button id="btnFecharModal" class="icon-button" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <input id="lancamentoId" type="hidden">
+      <div class="type-switch" role="group" aria-label="Tipo de lançamento">
+        <button class="type-option active" data-type="despesa" type="button">Despesa</button>
+        <button class="type-option" data-type="receita" type="button">Receita</button>
+      </div>
+      <input id="tipoLancamento" type="hidden" value="despesa">
+
+      <div class="form-grid">
+        <label class="field field-wide"><span>Descrição</span><input id="descricao" type="text" maxlength="80" placeholder="Ex.: Mercado" required></label>
+        <label class="field"><span>Valor</span><input id="valor" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required></label>
+        <label class="field"><span>Data</span><input id="data" type="date" required></label>
+        <label class="field"><span>Categoria</span><select id="categoria" required></select></label>
+        <label class="field"><span>Forma</span><select id="forma" required></select></label>
+        <label id="campoParcelas" class="field"><span>Parcelas</span><input id="parcelas" type="number" min="1" max="120" value="1"></label>
+        <label id="campoRecorrente" class="check-field"><input id="recorrente" type="checkbox"><span>Repetir como compromisso mensal</span></label>
+      </div>
+
+      <p id="erroForm" class="form-error" role="alert" hidden></p>
+      <div class="modal-actions">
+        <button id="btnCancelar" class="button button-ghost" type="button">Cancelar</button>
+        <button class="button button-primary" type="submit">Salvar lançamento</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
 </html>
